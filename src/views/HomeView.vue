@@ -1,9 +1,8 @@
 <script setup>
 import TheWelcome from '../components/TheWelcome.vue'
+import { Button } from 'flowbite-vue'
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+  <Button color="blue">Button</Button>
 </template>
