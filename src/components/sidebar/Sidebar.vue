@@ -40,6 +40,6 @@ onMounted(() => {
   >
     <SidebarHeader />
     <SidebarContent />
-    <SidebarFooter />
+    <!-- <SidebarFooter /> -->
   </aside>
 </template>

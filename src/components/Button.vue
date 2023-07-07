@@ -7,9 +7,16 @@ const props = defineProps({
     type: String,
     default: 'primary',
     validator(value) {
-      return ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'black'].includes(
-        value
-      )
+      return [
+        'primary',
+        'secondary',
+        'success',
+        'danger',
+        'warning',
+        'info',
+        'black',
+        'dark'
+      ].includes(value)
     }
   },
   type: {
@@ -82,7 +89,9 @@ const variantClasses = (variant) => ({
   'bg-yellow-500 text-white hover:bg-yellow-600 focus:ring-yellow-500': variant == 'warning',
   'bg-cyan-500 text-white hover:bg-cyan-600 focus:ring-cyan-500': variant == 'info',
   'bg-black text-gray-300 hover:text-white hover:bg-gray-800 focus:ring-black dark:hover:bg-dark-eval-3':
-    variant == 'black'
+    variant == 'black',
+  'text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700':
+    variant == 'dark'
 })
 
 const classes = computed(() => [
