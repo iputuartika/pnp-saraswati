@@ -2,7 +2,7 @@
 
 <template>
   <footer
-    class="fixed bottom-0 w-full border-t border-gray-200 dark:border-gray-700 sm:flex sm:items-center sm:justify-between p-1 xl:p-8 bg-white dark:bg-gray-800 z-50"
+    class="fixed bottom-0 w-full border-t border-gray-200 dark:border-gray-700 sm:flex sm:items-center sm:justify-between px-3 py-1 md:py-2 bg-white dark:bg-gray-800 z-50"
   >
     <p class="mb-0 text-sm text-center text-gray-500 dark:text-gray-400 sm:mb-0">
       &copy; 2023

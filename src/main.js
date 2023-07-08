@@ -11,6 +11,8 @@ import './index.css'
 // import flowbite
 import 'flowbite'
 
+import 'preline'
+
 const app = createApp(App)
 
 app.use(createPinia())
