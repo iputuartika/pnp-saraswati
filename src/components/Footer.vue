@@ -5,9 +5,7 @@
     class="fixed bottom-0 w-full border-t border-gray-200 dark:border-gray-700 sm:flex sm:items-center sm:justify-between px-3 py-1 md:py-2 bg-white dark:bg-gray-800 z-50"
   >
     <p class="mb-0 text-sm text-center text-gray-500 dark:text-gray-400 sm:mb-0">
-      &copy; 2023
-      <a href="https://flowbite.com/" class="hover:underline" target="_blank">Made with ❤ by </a>I
-      Putu Artika, S.Kom.
+      &copy; 2023 Made with ❤ by I Putu Artika, S.Kom.
     </p>
     <div class="flex justify-center items-center space-x-1">
       <a

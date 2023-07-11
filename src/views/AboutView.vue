@@ -1,6 +1,66 @@
 <script setup>
+import { BASE_URL } from '../api'
 import { Icon } from '@iconify/vue'
-import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell } from 'flowbite-vue'
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableHeadCell,
+  TableRow,
+  TableCell,
+  Pagination
+} from 'flowbite-vue'
+import { onMounted, ref, computed } from 'vue'
+import axios from 'axios'
+
+const items = ref([])
+const itemLength = ref(0)
+const itemsPerPage = ref(10)
+const currentPage = ref(1)
+const searchQuery = ref('')
+
+const paginatedItems = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage.value
+  const endIndex = startIndex + itemsPerPage.value
+  return filteredItems.slice(startIndex, endIndex)
+})
+
+const totalPages = computed(() => {
+  const page = Math.ceil(itemLength.value / itemsPerPage.value)
+  return page
+})
+
+const getProducts = async () => {
+  const response = await axios.get(`${BASE_URL}/products`)
+  try {
+    items.value = response.data
+    itemLength.value = items.value.length
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const filteredItems = computed(() => {
+  const query = searchQuery.value.toLowerCase().trim()
+  const startIndex = (currentPage.value - 1) * itemsPerPage.value
+  const endIndex = startIndex + itemsPerPage.value
+  if (!query) {
+    // Return all items if the search query is empty
+    return items.value.slice(startIndex, endIndex)
+  }
+  return items.value.filter((item) => {
+    // Perform case-insensitive matching on item properties you want to search
+    // Example: Searching by item name
+    const skuMatch = item.id.toString().includes(query)
+    const nameMatch = item.name.toLowerCase().includes(query)
+
+    return skuMatch || nameMatch
+  })
+})
+
+onMounted(() => {
+  getProducts(), totalPages
+})
 </script>
 
 <template>
@@ -32,7 +92,7 @@ import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell } from 
             </div>
             <input
               type="text"
-              id="simple-search"
+              v-model="searchQuery"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               placeholder="Search"
               required=""
@@ -43,13 +103,6 @@ import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell } from 
       <div
         class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
       >
-        <button
-          type="button"
-          class="py-2 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-        >
-          <Icon icon="mdi:plus-circle-outline" :style="{ fontSize: '18px' }" />
-          Add to cart
-        </button>
         <button
           type="button"
           class="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
@@ -205,174 +258,66 @@ import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell } from 
         </div>
       </div>
     </div>
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead class="border-t bg-gray-50 border-gray-200 dark:bg-gray-700 dark:border-gray-700">
-          <tr>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
-            >
-              Name
-            </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
-            >
-              Age
-            </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
-            >
-              Address
-            </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase dark:text-gray-400"
-            >
-              Action
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-          <tr>
-            <td
-              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200"
-            >
-              John Brown
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">45</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-              New York No. 1 Lake Park
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <a class="text-blue-500 hover:text-blue-700" href="#">Delete</a>
-            </td>
-          </tr>
-
-          <tr>
-            <td
-              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200"
-            >
-              Jim Green
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">27</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-              London No. 1 Lake Park
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <a class="text-blue-500 hover:text-blue-700" href="#">Delete</a>
-            </td>
-          </tr>
-
-          <tr>
-            <td
-              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200"
-            >
-              Joe Black
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">31</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-              Sidney No. 1 Lake Park
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <a class="text-blue-500 hover:text-blue-700" href="#">Delete</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <Table class="sm:rounded-none shadow-none" striped hoverable>
+      <table-head>
+        <table-head-cell class="text-center border border-l-0 border-gray-200 dark:border-gray-600"
+          >SKU</table-head-cell
+        >
+        <table-head-cell class="text-center border border-gray-200 dark:border-gray-600"
+          >Name</table-head-cell
+        >
+        <table-head-cell class="text-center border border-gray-200 dark:border-gray-600"
+          >Category</table-head-cell
+        >
+        <table-head-cell class="text-center border border-gray-200 dark:border-gray-600"
+          >Price</table-head-cell
+        >
+        <table-head-cell class="border border-r-0 border-gray-200 dark:border-gray-600"
+          ><span class="sr-only">Edit</span></table-head-cell
+        >
+      </table-head>
+      <!-- <table-body v-if="items.length === 0">
+        <tr>
+          <td colspan="5" class="text-center">Loading...</td>
+          <td>{{ items.length }}</td>
+        </tr>
+      </table-body> -->
+      <table-body>
+        <table-row v-for="product in filteredItems" :key="product.id">
+          <table-cell
+            class="w-32 text-right border border-l-0 border-gray-200 dark:border-gray-600"
+            >{{ product.id }}</table-cell
+          >
+          <table-cell class="border border-gray-200 dark:border-gray-600">{{
+            product.name
+          }}</table-cell>
+          <table-cell class="border border-gray-200 dark:border-gray-600 text-center">{{
+            product.category
+          }}</table-cell>
+          <table-cell class="border border-gray-200 dark:border-gray-600 text-right">{{
+            product.price
+          }}</table-cell>
+          <td class="text-center px-6 py-4 border border-gray-200 dark:border-gray-600">
+            {{ product.price }}
+          </td>
+        </table-row>
+      </table-body>
+    </Table>
     <nav
-      class="flex flex-col md:flex-row justify-between items-start md:items-center border-t border-gray-200 dark:border-gray-700 space-y-3 md:space-y-0 p-4"
+      class="flex flex-col md:flex-row justify-between items-start md:items-center pace-y-0 p-4"
       aria-label="Table navigation"
     >
-      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-        Showing
-        <span class="font-semibold text-gray-900 dark:text-white">1-10</span>
-        of
-        <span class="font-semibold text-gray-900 dark:text-white">1000</span>
-      </span>
-      <ul class="inline-flex items-stretch -space-x-px">
-        <li>
-          <a
-            href="#"
-            class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          >
-            <span class="sr-only">Previous</span>
-            <svg
-              class="w-5 h-5"
-              aria-hidden="true"
-              fill="currentColor"
-              viewbox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >1</a
-          >
-        </li>
-        <li>
-          <a
-            href="#"
-            class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >2</a
-          >
-        </li>
-        <li>
-          <a
-            href="#"
-            aria-current="page"
-            class="flex items-center justify-center text-sm z-10 py-2 px-3 leading-tight text-primary-600 bg-primary-50 border border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-            >3</a
-          >
-        </li>
-        <li>
-          <a
-            href="#"
-            class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >...</a
-          >
-        </li>
-        <li>
-          <a
-            href="#"
-            class="flex items-center justify-center text-sm py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >100</a
-          >
-        </li>
-        <li>
-          <a
-            href="#"
-            class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          >
-            <span class="sr-only">Next</span>
-            <svg
-              class="w-5 h-5"
-              aria-hidden="true"
-              fill="currentColor"
-              viewbox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-        </li>
-      </ul>
+      <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+        Page {{ currentPage }} /
+        <span class="font-semibold text-gray-900 dark:text-white">{{ totalPages }}</span>
+      </div>
+      <Pagination
+        v-model="currentPage"
+        :total-pages="totalPages"
+        show-icons
+        :layout="'navigation'"
+        :class="'text-sm'"
+      />
     </nav>
   </div>
 </template>
