@@ -2,6 +2,8 @@
 import { BASE_URL } from '../api'
 import { Icon } from '@iconify/vue'
 import {
+  Input,
+  Select,
   Button,
   Spinner,
   Table,
@@ -17,6 +19,11 @@ import axios from 'axios'
 import { useToast } from 'vue-toastification'
 
 const items = ref([])
+const category = ref([
+  { value: 'BB', name: 'Bahan Baku' },
+  { value: 'PDM', name: 'Setengah Jadi' },
+  { value: 'PDJ', name: 'Barang Jadi' }
+])
 const itemLength = ref()
 const itemsPerPage = ref(10)
 const currentPage = ref(1)
@@ -28,7 +35,7 @@ const createDrawer = ref(false)
 
 // Get prodcut data from API
 const getProducts = async () => {
-  const response = await axios.get(`${BASE_URL}/products`)
+  const response = await axios.get(`${BASE_URL}/product`)
   try {
     items.value = response.data
   } catch (error) {
@@ -162,33 +169,33 @@ onMounted(() => {
     </div>
     <!-- Table data -->
     <Table class="sm:rounded-none shadow-none" striped hoverable>
-      <table-head>
-        <table-head-cell class="text-center border border-l-0 border-gray-200 dark:border-gray-600"
-          >SKU</table-head-cell
+      <TableHead>
+        <TableHeadCell class="text-center border border-l-0 border-gray-200 dark:border-gray-600"
+          >SKU</TableHeadCell
         >
-        <table-head-cell class="w-1/2 text-center border border-gray-200 dark:border-gray-600"
-          >Name</table-head-cell
+        <TableHeadCell class="text-center border border-gray-200 dark:border-gray-600"
+          >Name</TableHeadCell
         >
-        <table-head-cell class="text-center border border-gray-200 dark:border-gray-600"
-          >Category</table-head-cell
+        <TableHeadCell class="text-center border border-gray-200 dark:border-gray-600"
+          >Category</TableHeadCell
         >
-        <table-head-cell class="text-center border border-gray-200 dark:border-gray-600"
-          >Price</table-head-cell
+        <TableHeadCell class="text-center border border-gray-200 dark:border-gray-600"
+          >Price</TableHeadCell
         >
-        <table-head-cell class="text-center border border-r-0 border-gray-200 dark:border-gray-600"
-          >Action</table-head-cell
+        <TableHeadCell class="text-center border border-r-0 border-gray-200 dark:border-gray-600"
+          >Action</TableHeadCell
         >
-      </table-head>
-      <table-body v-if="items.length === 0">
+      </TableHead>
+      <TableBody v-if="items.length === 0">
         <tr>
           <td colspan="5" class="text-center border-b border-gray-200 dark:border-gray-600">
             <div class="flex p-10 items-center justify-center">
-              <spinner size="8" />
+              <Spinner size="8" />
             </div>
           </td>
         </tr>
-      </table-body>
-      <table-body>
+      </TableBody>
+      <TableBody>
         <table-row v-for="product in filteredItems" :key="product.id" class="p-0">
           <td
             class="w-32 text-right border border-l-0 border-gray-200 dark:border-gray-600 px-6 py-2"
@@ -235,7 +242,7 @@ onMounted(() => {
             </div>
           </td>
         </table-row>
-      </table-body>
+      </TableBody>
     </Table>
     <!-- Table footer -->
     <div class="flex flex-row justify-between items-center p-4" aria-label="Table navigation">
@@ -254,86 +261,78 @@ onMounted(() => {
   </div>
   <!-- Create product drawer -->
   <div
-    class="fixed top-0 right-0 z-50 border-l border-gray-200 dark:border-gray-700 w-full h-full lg:max-w-2xl p-4 overflow-y-auto transition-transform bg-white dark:bg-gray-800"
+    class="fixed top-0 right-0 z-50 border-l border-gray-200 dark:border-gray-700 w-screen h-full lg:max-w-2xl p-4 overflow-y-auto transition-transform bg-white dark:bg-gray-800"
     :class="createDrawer ? 'translate-x-0' : 'translate-x-full'"
   >
-    <div class="inline-flex justify-between">
+    <div class="flex justify-between pb-2">
       <h5
-        class="inline-flex items-center mb-6 text-sm font-semibold text-gray-500 uppercase dark:text-gray-400"
+        class="inline-flex items-center text-sm font-semibold text-gray-500 uppercase dark:text-gray-400"
       >
         New Product
       </h5>
-      <Button @click="createDrawer = !createDrawer" color="alternative" class="p-64">
-        <Icon icon="mdi:close" :style="{ fontSize: '24px' }" />
+      <Button @click="createDrawer = !createDrawer" color="alternative" class="border-none">
+        <Icon icon="mdi:close" :style="{ fontSize: '20px' }" class="" />
       </Button>
     </div>
     <div class="space-y-4">
-      <div>
-        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Name</label
-        >
-        <input
+      <div class="grid gap-4 mb-4 sm:grid-cols-3">
+        <Input type="text" placeholder="Item code" label="Code" required />
+        <Input
           type="text"
-          name="title"
-          id="name"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Type product name"
-          required=""
+          placeholder="Item barcode"
+          label="Barcode"
+          required
+          class="sm:col-span-2"
         />
       </div>
       <div>
-        <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Category</label
-        >
-        <select
-          id="category"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >
-          <option selected="">Select category</option>
-          <option value="TV">TV/Monitors</option>
-          <option value="PC">PC</option>
-          <option value="GA">Gaming/Console</option>
-          <option value="PH">Phones</option>
-        </select>
+        <Input type="text" placeholder="Type product name" label="Name" required />
       </div>
-      <div>
-        <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Price</label
-        >
-        <input
-          type="number"
-          name="price"
-          id="price"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="$2999"
-          required=""
-        />
+      <div class="grid gap-4 mb-4 sm:grid-cols-3">
+        <Select placeholder="Select" label="Merk" :options="category" required />
+        <Select placeholder="Select" label="Category" :options="category" required />
+        <div>
+          <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Status</label
+          >
+          <div
+            class="flex justify-between p-2.5 border border-gray-200 rounded-lg dark:border-gray-700"
+          >
+            <div class="flex items-center">
+              <input
+                id="inline-radio"
+                type="radio"
+                value=""
+                name="inline-radio-group"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="inline-radio"
+                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >Active</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                id="inline-2-radio"
+                type="radio"
+                value=""
+                name="inline-radio-group"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              />
+              <label
+                for="inline-2-radio"
+                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >Inactive</label
+              >
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <label
-          for="description"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Description</label
-        >
-        <textarea
-          id="description"
-          rows="4"
-          class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Enter event description here"
-        ></textarea>
-      </div>
-      <div>
-        <label
-          for="description"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Description</label
-        >
-        <textarea
-          id="description"
-          rows="4"
-          class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Enter event description here"
-        ></textarea>
+      <div class="grid gap-4 mb-4 sm:grid-cols-3">
+        <Select placeholder="Select" label="Unit" :options="category" required />
+        <Input type="number" placeholder="0" label="Stock" required />
+        <Input type="number" placeholder="0" label="Price (Rp)" required />
       </div>
       <div>
         <label
@@ -345,12 +344,14 @@ onMounted(() => {
           id="description"
           rows="4"
           class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-          placeholder="Enter event description here"
+          placeholder="Item description here"
         ></textarea>
       </div>
-      <div class="flex bottom-0 right-0 justify-between space-x-4 w-full">
-        <Button class="w-full md:w-auto">Add product</Button>
-        <Button color="alternative" class="w-full md:w-auto">Close</Button>
+      <div class="relative md:absolute bottom-0 right-0 justify-between space-y-4">
+        <Button class="w-full md:w-24">Save</Button>
+        <Button @click="createDrawer = !createDrawer" color="alternative" class="w-full md:w-24"
+          >Cancel</Button
+        >
       </div>
     </div>
   </div>

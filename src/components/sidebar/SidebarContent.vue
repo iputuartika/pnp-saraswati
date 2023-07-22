@@ -27,11 +27,21 @@ const isCurrentPath = (path) => {
       icon="mdi:view-dashboard"
     />
 
-    <SidebarCollapsible icon="mdi:database" title="Master Data" :active="isCurrentPath('/about')">
+    <SidebarCollapsible icon="mdi:database" title="Master Data" :active="isCurrentPath('/data')">
       <SidebarCollapsibleItem
         :to="{ name: 'About' }"
-        title="Data Item"
+        title="Item"
         :active="isCurrentRoute('About')"
+      />
+      <SidebarCollapsibleItem
+        :to="{ name: 'Merk' }"
+        title="Merk"
+        :active="isCurrentRoute('Merk')"
+      />
+      <SidebarCollapsibleItem
+        :to="{ name: 'Category' }"
+        title="Category"
+        :active="isCurrentRoute('Category')"
       />
     </SidebarCollapsible>
 

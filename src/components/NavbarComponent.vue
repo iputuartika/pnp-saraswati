@@ -4,14 +4,19 @@ import { useDark, useToggle } from '@vueuse/core'
 import { Icon } from '@iconify/vue'
 import { sidebarState } from '@/composables'
 import { useRoute } from 'vue-router'
+import { useUserStore } from '../stores/user'
 
 const isDark = useDark()
+const userStore = useUserStore()
 const toggleDark = useToggle(isDark)
+const logoutUser = () => {
+  userStore.logout()
+}
 </script>
 
 <template>
   <nav
-    class="bg-white border-b border-gray-200 px-3 py-2 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-50"
+    class="bg-white border-b border-gray-200 px-3 py-2 dark:bg-gray-800 dark:border-gray-700 fixed left-0 right-0 top-0 z-30"
   >
     <div class="flex flex-wrap justify-between items-center">
       <!-- Navbar Left -->
@@ -590,7 +595,7 @@ const toggleDark = useToggle(isDark)
           <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
             <li>
               <a
-                href="#"
+                @click="logoutUser"
                 class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >Sign out</a
               >

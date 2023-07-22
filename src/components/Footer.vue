@@ -2,7 +2,7 @@
 
 <template>
   <footer
-    class="fixed bottom-0 w-full border-t border-gray-200 dark:border-gray-700 sm:flex sm:items-center sm:justify-between px-3 py-1 md:py-2 bg-white dark:bg-gray-800 z-40"
+    class="fixed bottom-0 w-full border-t border-gray-200 dark:border-gray-700 sm:flex sm:items-center sm:justify-between px-3 py-1 md:py-2 bg-white dark:bg-gray-800 z-30"
   >
     <p class="mb-0 text-sm text-center text-gray-500 dark:text-gray-400 sm:mb-0">
       &copy; 2023 Made with ❤ by I Putu Artika, S.Kom.
